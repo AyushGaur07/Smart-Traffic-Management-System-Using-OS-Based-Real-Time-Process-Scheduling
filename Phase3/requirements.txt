@@ -1,0 +1,18 @@
+# Core Traffic Simulation (SUMO & TraCI)
+eclipse-sumo>=1.28.0
+traci>=1.28.0
+sumolib>=1.28.0
+
+# Database Connection (MySQL)
+mysql-connector-python>=8.0.0
+
+# User Interface & Data Presentation
+streamlit>=1.30.0
+pandas>=2.0.0
+plotly>=5.15.0
+
+# Environment & Utilities
+python-dotenv>=1.0.0
+
+# Automated Testing
+pytest>=7.0.0

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<additional xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://sumo.dlr.de/xsd/additional_file.xsd">
+    <!-- Passenger Sedan: Standard commuter car -->
+    <vType id="passenger" accel="2.6" decel="4.5" length="5.0" minGap="2.5" maxSpeed="14.0" color="0.2,0.6,1.0" vClass="passenger"/>
+    
+    <!-- Transit Bus: Heavy vehicle with slower acceleration -->
+    <vType id="bus" accel="1.2" decel="3.5" length="12.0" minGap="3.0" maxSpeed="11.0" color="1.0,0.8,0.0" vClass="bus"/>
+    
+    <!-- Delivery Van / Small Truck -->
+    <vType id="delivery" accel="1.8" decel="4.0" length="7.5" minGap="2.5" maxSpeed="12.5" color="0.3,0.8,0.3" vClass="delivery"/>
+    
+    <!-- Emergency Vehicle: High priority, rapid acceleration -->
+    <vType id="emergency" accel="3.5" decel="5.0" length="6.0" minGap="2.0" maxSpeed="20.0" color="1.0,0.1,0.1" vClass="emergency"/>
+</additional>
