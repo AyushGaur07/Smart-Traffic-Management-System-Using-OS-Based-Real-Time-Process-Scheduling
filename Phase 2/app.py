@@ -2,10 +2,12 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-import database, scheduler, traffic
+import database, scheduler, traffic  
+
 
 st.set_page_config(page_title="Phase 2 Smart Traffic Management", layout="wide")
 st.title("Phase 2 Smart Traffic Management System")
+
 
 def metrics_chart(rows):
     data = pd.DataFrame(rows)
