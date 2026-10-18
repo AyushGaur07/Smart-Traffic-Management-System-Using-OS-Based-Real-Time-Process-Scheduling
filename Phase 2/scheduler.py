@@ -39,6 +39,9 @@ def _validate(tasks: Iterable[Task], quantum: int | None = None) -> list[Task]:
     return sorted(values, key=lambda t: (t.arrival, t.id))
 
 
+
+
+
 def _result(tasks: list[Task], timeline: list[dict], first_start: dict[str, int], completion: dict[str, int]) -> dict:
     task_rows = []
     for task in tasks:
