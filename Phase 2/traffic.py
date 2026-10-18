@@ -1,10 +1,8 @@
 from __future__ import annotations
-
 import os
 import shutil
 from pathlib import Path
 from statistics import mean
-
 import scheduler
 
 BASE_DIR = Path(__file__).resolve().parent
