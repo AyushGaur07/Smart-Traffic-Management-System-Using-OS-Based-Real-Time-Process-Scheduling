@@ -5,6 +5,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
+
 def _mysql():
     try:
         import mysql.connector
@@ -12,10 +14,14 @@ def _mysql():
     except ImportError as exc:
         raise RuntimeError("mysql-connector-python is not installed. Run: pip install -r requirements.txt") from exc
 
+
+
 def settings() -> dict:
     return {"host": os.getenv("DB_HOST", "localhost"), "port": int(os.getenv("DB_PORT", "3306")),
             "user": os.getenv("DB_USER", "root"), "password": os.getenv("DB_PASSWORD", ""),
             "database": os.getenv("DB_NAME", "smart_traffic")}
+
+
 
 def connection(include_database: bool = True):
     cfg = settings().copy()
