@@ -5,6 +5,9 @@ from collections import deque
 from typing import Iterable
 
 
+AGING_INTERVAL = 5
+
+
 @dataclass(frozen=True)
 class Task:
     id: str
@@ -12,6 +15,7 @@ class Task:
     burst: int
     priority: int
     description: str
+    age: int = 0
 
 
 def example_tasks() -> list[Task]:
@@ -32,14 +36,11 @@ def _validate(tasks: Iterable[Task], quantum: int | None = None) -> list[Task]:
     if len({t.id for t in values}) != len(values):
         raise ValueError("Task IDs must be unique.")
     for task in values:
-        if task.arrival < 0 or task.burst <= 0:
-            raise ValueError(f"Task {task.id} must have arrival >= 0 and burst > 0.")
+        if task.arrival < 0 or task.burst <= 0 or task.age < 0:
+            raise ValueError(f"Task {task.id} must have arrival and age >= 0 and burst > 0.")
     if quantum is not None and quantum <= 0:
         raise ValueError("Round Robin time quantum must be greater than zero.")
     return sorted(values, key=lambda t: (t.arrival, t.id))
-
-
-
 
 
 def _result(tasks: list[Task], timeline: list[dict], first_start: dict[str, int], completion: dict[str, int]) -> dict:
@@ -92,6 +93,43 @@ def priority_preemptive(tasks: Iterable[Task]) -> dict:
     return _result(tasks, timeline, starts, complete)
 
 
+def _aging_key(task: Task, time: int, executed: int = 0) -> tuple[int, int, int, str]:
+    """Rank a task by dynamic priority while preserving emergency priority."""
+    waited = task.age + max(0, time - task.arrival - executed)
+    if task.priority == 0:
+        return (0, 0, task.arrival, task.id)
+    effective_priority = max(1, task.priority - (waited // AGING_INTERVAL))
+    return (effective_priority, -waited, task.arrival, task.id)
+
+
+def priority_with_aging(tasks: Iterable[Task]) -> dict:
+    """Preemptive priority scheduling that prevents starvation through aging."""
+    tasks = _validate(tasks)
+    remaining = {task.id: task.burst for task in tasks}
+    executed = {task.id: 0 for task in tasks}
+    time = 0
+    starts: dict[str, int] = {}
+    complete: dict[str, int] = {}
+    timeline: list[dict] = []
+    while len(complete) < len(tasks):
+        ready = [task for task in tasks if task.arrival <= time and remaining[task.id] > 0]
+        if not ready:
+            time = min(task.arrival for task in tasks if remaining[task.id] > 0)
+            continue
+        task = min(ready, key=lambda candidate: _aging_key(candidate, time, executed[candidate.id]))
+        starts.setdefault(task.id, time)
+        if timeline and timeline[-1]["task_id"] == task.id:
+            timeline[-1]["end"] += 1
+        else:
+            timeline.append({"task_id": task.id, "start": time, "end": time + 1})
+        remaining[task.id] -= 1
+        executed[task.id] += 1
+        time += 1
+        if remaining[task.id] == 0:
+            complete[task.id] = time
+    return _result(tasks, timeline, starts, complete)
+
+
 def round_robin(tasks: Iterable[Task], quantum: int = 2) -> dict:
     tasks = _validate(tasks, quantum); remaining = {t.id: t.burst for t in tasks}; ready = deque(); index = 0; time = 0; starts = {}; complete = {}; timeline = []
     while len(complete) < len(tasks):
@@ -108,7 +146,8 @@ def round_robin(tasks: Iterable[Task], quantum: int = 2) -> dict:
 
 def run_algorithm(name: str, tasks: Iterable[Task], quantum: int = 2) -> dict:
     methods = {"FCFS": fcfs, "Priority (Non-preemptive)": priority_non_preemptive,
-               "Priority (Preemptive)": priority_preemptive}
+               "Priority (Preemptive)": priority_preemptive,
+               "Priority with Aging": priority_with_aging}
     if name not in methods and name != "Round Robin":
         raise ValueError(f"Unknown scheduling algorithm: {name}")
     result = round_robin(tasks, quantum) if name == "Round Robin" else methods[name](tasks)
