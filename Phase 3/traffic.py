@@ -1,15 +1,17 @@
 from __future__ import annotations
+
 import os
 import shutil
 from pathlib import Path
 from statistics import mean
+
 import scheduler
 
 BASE_DIR = Path(__file__).resolve().parent
 SUMO_CONFIG = BASE_DIR / "sumo" / "traffic.sumocfg"
 TLS_ID = "center"
 SCHEDULING_ALGORITHMS = (
-    "FCFS", "Priority (Non-preemptive)", "Priority (Preemptive)", "Round Robin",
+    "FCFS", "Priority (Non-preemptive)", "Priority (Preemptive)", "Priority with Aging", "Round Robin",
 )
 SCHEDULING_INTERVAL = 5
 WAITING_TASK_THRESHOLD = 8.0
@@ -121,14 +123,14 @@ def build_traffic_tasks(measurement: dict) -> tuple[list[scheduler.Task], dict[s
             code = f"WAIT_{direction}"
             priority = 1 if wait >= 20 else 2
             tasks.append(scheduler.Task(code, 0, 1, priority,
-                        f"Reduce {direction} average wait of {wait:.1f} seconds"))
+                        f"Reduce {direction} average wait of {wait:.1f} seconds", int(wait)))
             task_actions[code] = {"action": "extend_green", "direction": direction,
                                   "reason": f"Average waiting time is {wait:.1f} seconds"}
         if queue > 0:
             code = f"QUEUE_{direction}"
             priority = 2 if queue >= 5 else 3
             tasks.append(scheduler.Task(code, 0, 1, priority,
-                        f"Serve {direction} queue of {queue} stopped vehicle(s)"))
+                        f"Serve {direction} queue of {queue} stopped vehicle(s)", int(wait)))
             task_actions[code] = {"action": "extend_green", "direction": direction,
                                   "reason": f"Queue length is {queue} vehicle(s)"}
     return tasks, task_actions
@@ -286,3 +288,4 @@ def run_simulation(duration: int = 300, demand: float = 1.0, strategy: str = "fi
                "scheduling_cycles": len(scheduling_batches)}
     return {"summary": summary, "snapshots": snapshots, "phases": phases,
             "scheduling_batches": scheduling_batches, "control_actions": control_actions}
+                       
