@@ -40,6 +40,8 @@ def find_sumo(gui: bool = False) -> str | None:
     return None
 
 
+
+
 def sumo_status() -> dict:
     return {"sumo": find_sumo(False), "sumo_gui": find_sumo(True),
             "config": str(SUMO_CONFIG), "config_exists": SUMO_CONFIG.exists()}
