@@ -1,0 +1,35 @@
+<routes>
+    <vType id="passenger" vClass="passenger" accel="2.6" decel="4.5" sigma="0.5" length="5" minGap="2.5" maxSpeed="13.89" color="0,100,255"/>
+    <!-- These are genuine SUMO emergency vehicles. TraCI detects their class
+         while they are on an incoming edge; short runs may naturally contain none. -->
+    <vType id="ambulance" vClass="emergency" accel="3.0" decel="5.0" sigma="0" length="5" minGap="2.0" maxSpeed="16.67" color="255,0,0" guiShape="emergency"/>
+    <!-- Through, left, and right movement routes for each approach. -->
+    <route id="north_south" edges="n_in s_out"/>
+    <route id="north_east" edges="n_in e_out"/>
+    <route id="north_west" edges="n_in w_out"/>
+    <route id="south_north" edges="s_in n_out"/>
+    <route id="south_west" edges="s_in w_out"/>
+    <route id="south_east" edges="s_in e_out"/>
+    <route id="east_west" edges="e_in w_out"/>
+    <route id="east_south" edges="e_in s_out"/>
+    <route id="east_north" edges="e_in n_out"/>
+    <route id="west_east" edges="w_in e_out"/>
+    <route id="west_north" edges="w_in n_out"/>
+    <route id="west_south" edges="w_in s_out"/>
+
+    <!-- East-west is deliberately busier, so adaptive timing has useful demand to respond to. -->
+    <flow id="n_through" type="passenger" route="north_south" begin="0" end="300" period="15" departLane="best" departSpeed="max"/>
+    <flow id="e_through" type="passenger" route="east_west" begin="0" end="300" period="3" departLane="best" departSpeed="max"/>
+    <flow id="s_through" type="passenger" route="south_north" begin="1" end="300" period="15" departLane="best" departSpeed="max"/>
+    <flow id="w_through" type="passenger" route="west_east" begin="1" end="300" period="3" departLane="best" departSpeed="max"/>
+    <flow id="n_left" type="passenger" route="north_east" begin="2" end="300" period="30" departLane="best" departSpeed="max"/>
+    <flow id="e_left" type="passenger" route="east_south" begin="2" end="300" period="60" departLane="best" departSpeed="max"/>
+    <flow id="s_left" type="passenger" route="south_west" begin="3" end="300" period="30" departLane="best" departSpeed="max"/>
+    <flow id="w_left" type="passenger" route="west_north" begin="3" end="300" period="60" departLane="best" departSpeed="max"/>
+    <flow id="n_right" type="passenger" route="north_west" begin="4" end="300" period="30" departLane="best" departSpeed="max"/>
+    <flow id="e_right" type="passenger" route="east_north" begin="4" end="300" period="30" departLane="best" departSpeed="max"/>
+    <flow id="s_right" type="passenger" route="south_east" begin="5" end="300" period="30" departLane="best" departSpeed="max"/>
+    <flow id="w_right" type="passenger" route="west_south" begin="5" end="300" period="30" departLane="best" departSpeed="max"/>
+    <vehicle id="ambulance_ns_90" type="ambulance" route="north_south" depart="90" departLane="best" departSpeed="max"/>
+    <vehicle id="ambulance_ew_180" type="ambulance" route="east_west" depart="180" departLane="best" departSpeed="max"/>
+</routes>
