@@ -3,11 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass, asdict
 from collections import deque
 from typing import Iterable
-
-
 AGING_INTERVAL = 5
-
-
 @dataclass(frozen=True)
 class Task:
     id: str
